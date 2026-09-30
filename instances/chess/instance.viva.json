@@ -1,0 +1,75 @@
+{
+  "manifest": {
+    "type": "instance",
+    "slug": "chess",
+    "version": "0.1.0"
+  },
+  "daemons": [
+    {
+      "manifest": {
+        "type": "daemon",
+        "slug": "chess",
+        "version": "0.1.0",
+        "name": "Chess",
+        "description": "Play, study, riddles, practice, library — over one corpus of games, positions, openings and puzzles, with an engine behind the door.",
+        "icon": {
+          "emoji": "♞"
+        }
+      },
+      "modes": [
+        "@chess/domain/chess",
+        "@chess/topology/game",
+        "@chess/topology/position",
+        "@chess/topology/opening",
+        "@chess/topology/puzzle",
+        "@chess/topography/openings",
+        "@chess/topography/puzzles",
+        "@chess/board/play",
+        "@chess/study/analysis",
+        "@chess/riddle/puzzles",
+        "@chess/coach/practice",
+        "@chess/coach/coach",
+        "@chess/library/games"
+      ],
+      "consume": {
+        "engine": {
+          "module": "@chess/service/stockfish",
+          "statics": {
+            "binary": "${VIVA_SERVICE_STOCKFISH_BINARY}",
+            "threads": "${VIVA_SERVICE_STOCKFISH_THREADS}",
+            "hash": "${VIVA_SERVICE_STOCKFISH_HASH}"
+          }
+        }
+      }
+    }
+  ],
+  "environment": {
+    "type": "object",
+    "required": [
+      "VIVA_SERVICE_STOCKFISH_BINARY",
+      "VIVA_SERVICE_STOCKFISH_THREADS",
+      "VIVA_SERVICE_STOCKFISH_HASH"
+    ],
+    "properties": {
+      "VIVA_SERVICE_STOCKFISH_BINARY": {
+        "type": "string",
+        "description": "The UCI engine binary the daemon spawns. brew install stockfish puts it on PATH. Example: stockfish",
+        "default": "stockfish",
+        "group": "engine"
+      },
+      "VIVA_SERVICE_STOCKFISH_THREADS": {
+        "type": "string",
+        "description": "Search threads the engine may use. Example: 2",
+        "default": "2",
+        "group": "engine"
+      },
+      "VIVA_SERVICE_STOCKFISH_HASH": {
+        "type": "string",
+        "description": "Transposition table in MB. Example: 128",
+        "default": "128",
+        "group": "engine"
+      }
+    },
+    "additionalProperties": false
+  }
+}
