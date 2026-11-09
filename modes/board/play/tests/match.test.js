@@ -311,14 +311,14 @@ describe("play mode — a match through the aperture", { sanitizeResources: fals
     expect(text).toMatch(/you user/);
     expect(text).toMatch(/\b(3:0[0-2]|2:5\d)\b/);
     expect(text).toMatch(/⇅ ☰ ♪ \+ ½ ⚑/);
-    expect(text).toMatch(/match moves 2 ✕ white you black stockfish 1600 club time control 3\+2 blitz rewindable baked in at the first move · \+ new opens the setup again$/);
+    expect(text).toMatch(/match moves 2 design ✕ white you black stockfish 1600 club time control 3\+2 blitz rewindable baked in at the first move · \+ new opens the setup again$/);
     expect(body).toMatch(/title="new match · asks twice"/);
     expect((body.match(/class="sq [^"]*grab/g) ?? []).length).toBeGreaterThan(10);
     expect(body).not.toMatch(/#[0-9a-fA-F]{6}\b/);
     // before the first move the panel is inputs: all three kinds, the strength, the time control
     const pending = await board.call("/match/create", { seats: { white: { kind: "user" }, black: { kind: "engine", elo: 1600 } }, clock: { initial: 180, increment: 2 } });
     const open = await renderView(ENTRY, { buffer: { id: pending.id, data: pending.data ?? (await rig.entities.buffer.findOne({ id: pending.id })).data } });
-    expect(open.text).toMatch(/setup moves 0 ✕ white you stockfish a model black you stockfish a model − 1600 club \+ 1320 1600 2000 2400 2800 max/);
+    expect(open.text).toMatch(/setup moves 0 design ✕ white you stockfish a model black you stockfish a model − 1600 club \+ 1320 1600 2000 2400 2800 max/);
     expect(open.text).toMatch(/time control 3\+2 blitz 1\+0 3\+2 5\+0 10\+0 15\+10 unlimited minutes each − 3 \+ increment, seconds − 2 \+ rewindable the first move bakes the seats, the clock and rewindable into the game$/);
     expect(open.body).toMatch(/title="new match"/);
     // rewindable is one chip: its border says on or off, its title says what it does
@@ -327,20 +327,20 @@ describe("play mode — a match through the aperture", { sanitizeResources: fals
     // two bots wait for start, and the note says so
     const bots = await board.call("/match/create", { seats: { white: { kind: "engine", elo: 2000 }, black: { kind: "engine", elo: 1600 } } });
     const idle = await renderView(ENTRY, { buffer: { id: bots.id, data: (await rig.entities.buffer.findOne({ id: bots.id })).data } });
-    expect(idle.text).toMatch(/setup moves 0 ✕ setup two seats, no user — ▶ start lets them play/);
+    expect(idle.text).toMatch(/setup moves 0 design ✕ setup two seats, no user — ▶ start lets them play/);
     expect(idle.text).toMatch(/not started stockfish against stockfish the seats and the clock bake in at the first move ▶ start ⇅ ☰ ♪ \+ ▶ ½ ⚑/);
     expect(idle.body).toMatch(/title="start the engines"/);
     // so does a match where a bot has white — the card over the board says start, and the rail again
     const robot = await board.call("/match/create", { seats: { white: { kind: "engine", elo: 1600 }, black: { kind: "user" } }, clock: { initial: 180, increment: 2 } });
     const wait = await renderView(ENTRY, { buffer: { id: robot.id, data: (await rig.entities.buffer.findOne({ id: robot.id })).data } });
-    expect(wait.text).toMatch(/not started stockfish has white the seats and the clock bake in at the first move ▶ start ⇅ ☰ ♪ \+ ▶ ½ ⚑ you user 3:00 setup moves 0 ✕ setup stockfish has white — ▶ start begins the match/);
+    expect(wait.text).toMatch(/not started stockfish has white the seats and the clock bake in at the first move ▶ start ⇅ ☰ ♪ \+ ▶ ½ ⚑ you user 3:00 setup moves 0 design ✕ setup stockfish has white — ▶ start begins the match/);
     expect((wait.body.match(/title="start the match"/g) ?? []).length).toBe(2);
     // the end: the card tells the outcome as the user's own where one seat is theirs, and what comes next
     const over = await board.call("/match/create", { seats: { white: { kind: "user" }, black: { kind: "engine", elo: 1600 } } });
     await board.call("/match/move", { buffer: over.id, uci: "e2e4" });
     await board.call("/match/resign", { buffer: over.id, side: "white" });
     const lost = await renderView(ENTRY, { buffer: { id: over.id, data: (await rig.entities.buffer.findOne({ id: over.id })).data } });
-    expect(lost.text).toMatch(/game over you lost 0-1 · resignation rematch set up analyse review ⇅ ☰ ♪ \+ ½ ⚑ you user match moves 2 ✕ result 0-1 · resignation/);
+    expect(lost.text).toMatch(/game over you lost 0-1 · resignation rematch set up analyse review ⇅ ☰ ♪ \+ ½ ⚑ you user match moves 2 design ✕ result 0-1 · resignation/);
     expect(lost.body).toMatch(/title="again, colours swapped"/);
     expect(lost.body).toMatch(/title="open this game in the study"/);
     // a rewindable match rewound: the rail carries ‹ ›, the note says where the board is, and the

@@ -45,7 +45,7 @@ export const PLACED = traits.define("PLACED", {
       const owner = await this.owner(kind);
       const held = await this.findOne({ slug, mode: owner.id });
       if (held) return held;
-      const row = this.create({ slug, mode: owner, ...data });
+      const row = this.create({ slug, daemon: owner.daemon, mode: owner, ...data });
       for (const symbol of await this.symbolsNamed([kind, ...symbols])) row.symbols.add(symbol);
       await this.em.flush();
       return row;

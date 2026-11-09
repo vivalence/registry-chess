@@ -29,9 +29,9 @@
   --pb: var(--surface-sunk);
   --pw-shadow: var(--shadow);
   --pb-shadow: color-mix(in srgb, var(--text-header) 28%, transparent);
-  --hl-last: color-mix(in srgb, var(--primary) 28%, transparent);
-  --hl-sel: color-mix(in srgb, var(--primary) 50%, transparent);
-  --hl-dot: color-mix(in srgb, var(--t1) 35%, transparent);
+  --hl-last: color-mix(in srgb, var(--warning) 40%, transparent);
+  --hl-sel: color-mix(in srgb, var(--warning) 55%, transparent);
+  --hl-dot: color-mix(in srgb, var(--t1) 18%, transparent);
   --code: var(--font-family-code);
   --sans: var(--font-family-sans-text);
   --head: var(--font-family-sans-heading);
@@ -51,21 +51,49 @@
   outline: none;
 }
 
-  /* a light theme flips the zone: its surface is the light one and its contrast is ink, so the squares
-     and the pieces swap which token they read — every other alias follows the theme as it is */
+  /* a light theme flips the zone: its surface is the light one and its contrast is ink, so the pieces
+     swap which token they read; each light theme names its own two squares, the pair two steps apart
+     on its ladder so the board reads as a board — every other alias follows the theme as it is */
   :global(:root[data-theme="parchment"] .chess),
   :global(:root[data-theme="porcelain"] .chess),
   :global(:root[data-theme="datasette"] .chess) {
-    --sq-light: var(--control-contrast-pressed);
-    --sq-dark: var(--boundary-strong);
     --pw: var(--surface-lift);
     --pb: var(--text-header);
-    --pw-shadow: color-mix(in srgb, var(--text-header) 55%, transparent);
+    --pw-shadow: color-mix(in srgb, var(--text-header) 70%, transparent);
     --pb-shadow: color-mix(in srgb, var(--surface-lift) 40%, transparent);
+  }
+  :global(:root[data-theme="parchment"] .chess) {
+    --sq-light: var(--surface);
+    --sq-dark: var(--boundary);
+  }
+  :global(:root[data-theme="porcelain"] .chess) {
+    --sq-light: var(--surface);
+    --sq-dark: var(--boundary-strong);
   }
   :global(:root[data-theme="datasette"] .chess) {
     --sq-light: var(--surface-sunk);
     --sq-dark: var(--text-light);
+  }
+
+  :global(.chess [data-board="brown"]),
+  :global(.chess [data-board="blue"]),
+  :global(.chess [data-board="green"]) {
+    --pw: #ffffff;
+    --pb: #000000;
+    --pw-shadow: rgba(0, 0, 0, 0.35);
+    --pb-shadow: rgba(0, 0, 0, 0.25);
+  }
+  :global(.chess [data-board="brown"]) {
+    --sq-light: #f0d9b5;
+    --sq-dark: #b58863;
+  }
+  :global(.chess [data-board="blue"]) {
+    --sq-light: #dee3e6;
+    --sq-dark: #8ca2ad;
+  }
+  :global(.chess [data-board="green"]) {
+    --sq-light: #ebecd0;
+    --sq-dark: #779556;
   }
 
 /* ── blocks ── */

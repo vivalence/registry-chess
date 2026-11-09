@@ -32,7 +32,7 @@ export async function mount({ engine = null } = {}) {
 
   const modes = {};
   for (const slug of TOPOLOGIES) {
-    modes[slug] = entities.mode.create({ type: "topology", slug, name: slug, traits: [], installed: "", version: "0.1.0" });
+    modes[slug] = entities.mode.create({ type: "topology", slug, name: slug, daemon: DAEMON, traits: [], installed: "", version: "0.1.0" });
   }
   await em.flush();
   const thread = em.create(sets.userspace.thread.entity, { user, mode: modes.game, traits: [], trait: {}, counter: 0 });
@@ -40,7 +40,7 @@ export async function mount({ engine = null } = {}) {
   em.setFilterParams("user", { user: user.id });
 
   for (const [slug, rows] of Object.entries(SYMBOLS)) {
-    for (const row of rows) entities.symbol.create({ slug: row.slug, mode: modes[slug], traits: row.traits, trait: row.trait });
+    for (const row of rows) entities.symbol.create({ slug: row.slug, mode: modes[slug], daemon: DAEMON, traits: row.traits, trait: row.trait });
   }
   await em.flush();
   em.clear();
@@ -57,11 +57,11 @@ export async function mount({ engine = null } = {}) {
     modes: {},
     reference: new Path(`/daemon/${DAEMON}`),
   };
-  daemon.twitch.use(shard.context.spread(contexts.host, daemon)).use(shard.datamap.owned());
+  daemon.twitch.use(shard.context.spread(contexts.daemonDie, daemon)).use(shard.datamap.owned());
   daemon.twitch.branch("/after").use(shard.datamap.detached(held));
   held.registerSubscriber(daemon.twitch);
-  daemon.aperture.use(shard.context.spread(contexts.host, daemon));
-  domain.aperture.use(shard.context.spread(contexts.host, daemon));
+  daemon.aperture.use(shard.context.spread(contexts.daemonDie, daemon));
+  domain.aperture.use(shard.context.spread(contexts.daemonDie, daemon));
   daemon.aperture.graft(domain.aperture);
   daemon.call = shape.proxy(domain.aperture, steer.strategy.direct);
 
@@ -69,7 +69,7 @@ export async function mount({ engine = null } = {}) {
   const conn = new Connection(new Url("http://chess-rig"), shard.transmitter.inline(handler));
 
   const tools = shape.proxy(domain.tools, steer.strategy.direct);
-  const caller = () => ({ ...shard.context.lift(contexts.host, daemon), user, mode: { id: modes.game.id }, thread });
+  const caller = () => ({ ...shard.context.lift(contexts.daemonDie, daemon), user, mode: { id: modes.game.id }, thread });
   const call = (path, input) => steer.dispatch.invoke(domain.aperture, path, steer.strategy.direct)({ ...caller(), input });
   const invoke = (path, input) => tools[path]({ ...caller(), input });
   const drain = async (path, input) => {
@@ -101,6 +101,7 @@ export async function mountMode(rig, module, { harness = null } = {}) {
     type: module.manifest.type,
     slug: module.manifest.slug,
     name: module.manifest.name,
+    daemon: daemon.slug,
     traits: module.manifest.traits,
     installed: "",
     version: module.manifest.version,
@@ -125,14 +126,14 @@ export async function mountMode(rig, module, { harness = null } = {}) {
     },
   };
   if (module.buffer) mode.buffer = (desc = {}) => entities.buffer.create({ mode: row.id, ...desc, data: module.buffer.fill({ data: {}, ...desc }).data });
-  mode.aperture.use(shard.context.spread(contexts.host, daemon)).use(shard.context.bind("mode", mode));
+  mode.aperture.use(shard.context.spread(contexts.daemonDie, daemon)).use(shard.context.bind("mode", mode));
   if (module.aperture) mode.aperture.graft(module.aperture);
   if (module.tools) mode.tools.graft(module.tools);
   daemon.modes[module.manifest.type] ??= {};
   daemon.modes[module.manifest.type][module.manifest.slug] = mode;
-  const call = (path, input) => steer.dispatch.invoke(mode.aperture, path, steer.strategy.direct)({ ...shard.context.lift(contexts.host, daemon), mode, user: rig.user, thread: rig.thread, input });
+  const call = (path, input) => steer.dispatch.invoke(mode.aperture, path, steer.strategy.direct)({ ...shard.context.lift(contexts.daemonDie, daemon), mode, user: rig.user, thread: rig.thread, input });
   const tools = shape.proxy(mode.tools, steer.strategy.direct);
-  const invoke = (path, input) => tools[path]({ ...shard.context.lift(contexts.host, daemon), mode, user: rig.user, thread: rig.thread, input });
+  const invoke = (path, input) => tools[path]({ ...shard.context.lift(contexts.daemonDie, daemon), mode, user: rig.user, thread: rig.thread, input });
   return { mode, row, call, invoke };
 }
 

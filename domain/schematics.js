@@ -51,7 +51,7 @@ export const OCCUPANT = v
     }),
     v.object({
       kind: v.const("hallucinator"),
-      tune: v.string().optional().desc('The cortex tune the seat plays with. Example: "capable".'),
+      tier: v.primitives.hallucination.Tier.optional().desc('The tier the seat plays with. Example: "capable"'),
       assisted: v
         .boolean()
         .default(false)

@@ -7,7 +7,7 @@ import { renderView } from "./render.js";
 const { describe, it, expect } = specimen;
 
 const ROOT = new URL("../modes/", import.meta.url).pathname;
-const KIT = ["Board.svelte", "Nav.svelte", "Seat.svelte", "Moves.svelte", "Theme.svelte", "Shell.svelte", "Ladder.svelte", "layout.js", "material.js", "open.js", "sound.js"];
+const KIT = ["Board.svelte", "Nav.svelte", "Seat.svelte", "Moves.svelte", "Theme.svelte", "Shell.svelte", "Ladder.svelte", "layout.js", "material.js", "open.js", "pieces.js", "sound.js"];
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 // every mode that carries a kit
@@ -27,7 +27,7 @@ const carriers = async () => {
 };
 
 describe("the kit — one copy per mode, pinned equal", () => {
-  it("P-kit-equal: every chess mode carries the same Board · Nav · Seat · Moves · Theme · Shell · Ladder · layout.js · material.js · open.js · sound.js", async () => {
+  it("P-kit-equal: every chess mode carries the same Board · Nav · Seat · Moves · Theme · Shell · Ladder · layout.js · material.js · open.js · pieces.js · sound.js", async () => {
     const modes = await carriers();
     expect(modes.map((mode) => mode.slice(ROOT.length))).toEqual(["board/play", "coach/practice", "library/games", "riddle/puzzles", "study/analysis"]);
     const [reference, ...others] = modes;
@@ -65,14 +65,16 @@ describe("the kit — one copy per mode, pinned equal", () => {
     }
   });
 
-  it("P-board-renders: the start position prints 64 squares, 32 glyphs, both coordinate rails", async () => {
+  it("P-board-renders: the start position prints 64 squares, 32 pieces, both coordinate rails", async () => {
     const [reference] = await carriers();
     const { body } = await renderView(`${reference}/buffer/kit/Board.svelte`, { fen: START, dests: { e2: ["e3", "e4"], g1: ["f3", "h3"] }, movable: true }, { raw: true });
     expect((body.match(/class="sq /g) ?? []).length).toBe(64);
-    expect((body.match(/♟/g) ?? []).length).toBe(16);
-    expect((body.match(/♞/g) ?? []).length).toBe(4);
-    // the corner carries both rails in one coord; the rest one each
-    for (const coord of ["a1", "h", "8", "2"]) expect(body).toMatch(new RegExp(`class="coord[^"]*">${coord}<`));
+    expect((body.match(/class="piece /g) ?? []).length).toBe(32);
+    expect((body.match(/data-role="p"/g) ?? []).length).toBe(16);
+    expect((body.match(/data-role="n"/g) ?? []).length).toBe(4);
+    // the rank rail on the a-file, the file rail on the first rank; the corner carries one of each
+    for (const rank of ["1", "2", "8"]) expect(body).toMatch(new RegExp(`class="coord rank[^"]*">${rank}<`));
+    for (const file of ["a", "h"]) expect(body).toMatch(new RegExp(`class="coord file[^"]*">${file}<`));
     expect((body.match(/class="sq [^"]*grab/g) ?? []).length).toBe(2);
   });
 

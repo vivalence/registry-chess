@@ -42,3 +42,100 @@ await Deno.writeTextFile(
   new URL("index.js", here),
   `export const SET = { name: "chessnut", author: "Alexis Luengas", licence: "Apache-2.0" };\n\nexport const PNG = {\n${entries}\n};\n`,
 );
+
+const KITS = ["board/play", "coach/practice", "library/games", "riddle/puzzles", "study/analysis"];
+const SIDES = { white: "w", black: "b" };
+
+const frameOf = (svgs) => {
+  const boxes = svgs.map(bounds);
+  const box = {
+    left: Math.min(...boxes.map((each) => each.left)),
+    top: Math.min(...boxes.map((each) => each.top)),
+    right: Math.max(...boxes.map((each) => each.right)),
+    bottom: Math.max(...boxes.map((each) => each.bottom)),
+  };
+  const scale = Number(svgs[0].match(/viewBox="[\d.]+ [\d.]+ ([\d.]+)/)[1]) / PROBE;
+  const at = (value) => Math.round(value * scale);
+  return `${at(box.left)} ${at(box.top)} ${at(box.right - box.left)} ${at(box.bottom - box.top)}`;
+};
+
+const inner = (svg) => svg.slice(svg.indexOf(">", svg.indexOf("<svg")) + 1, svg.lastIndexOf("</svg>"));
+
+const inked = (svg) =>
+  inner(svg)
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\s+id="[^"]*"/g, "")
+    .replaceAll("#FFFFFF", "var(--piece-fill)")
+    .replaceAll("#000000", "var(--piece-ink)")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const TOKENS = {
+  white: { "#fff": "var(--piece-fill)", "#bfd3d7": "var(--piece-shade)", "#000": "var(--piece-edge)" },
+  black: { "#1c1c2f": "var(--piece-fill)", "#7f899b": "var(--piece-shade)", "#000": "var(--piece-edge)" },
+};
+const PAINTED = ["fill", "stroke", "stop-color"];
+
+const tokened = (svg, side, prefix) => {
+  const rules = {};
+  for (const [, block] of svg.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g))
+    for (const [, name, declarations] of block.matchAll(/\.([\w-]+)\s*\{([^}]*)\}/g)) rules[name] = declarations;
+  const referenced = new Set([...svg.matchAll(/(?:url\(|href=")#([\w-]+)/g)].map(([, id]) => id));
+  const painted = (style) =>
+    style
+      .replace(/#[0-9a-fA-F]{3,6}\b/g, (hex) => TOKENS[side][hex.toLowerCase()] ?? hex)
+      .replace(/url\(#([\w-]+)\)/g, (_, id) => `url(#${prefix}-${id})`);
+  const tag = (_, name, attributes, closing) => {
+    const kept = [];
+    const styles = [];
+    for (const [, key, value] of attributes.matchAll(/([\w:-]+)="([^"]*)"/g)) {
+      if (key === "class") styles.push(...value.split(/\s+/).filter((name) => rules[name]).map((name) => rules[name]));
+      else if (key === "style") styles.push(value);
+      else if (PAINTED.includes(key) && value.startsWith("#")) styles.push(`${key}:${value}`);
+      else if (key === "id") referenced.has(value) && kept.push(`id="${prefix}-${value}"`);
+      else if (key === "xlink:href" || key === "href") kept.push(`href="#${prefix}-${value.slice(1)}"`);
+      else kept.push(`${key}="${painted(value)}"`);
+    }
+    if (styles.length) kept.push(`style="${painted(styles.join(";"))}"`);
+    return `<${name}${kept.map((attribute) => ` ${attribute}`).join("")}${closing}>`;
+  };
+  const markup = inner(svg)
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/g, "")
+    .replace(/<metadata[\s\S]*?<\/metadata>/g, "")
+    .replace(/<([\w:-]+)((?:\s+[\w:-]+="[^"]*")*)\s*(\/?)>/g, tag)
+    .replace(/\s+/g, " ")
+    .trim();
+  const left = markup.match(/#[0-9a-fA-F]{3,6}\b/g);
+  if (left) throw new Error(`[pieces] ${prefix} keeps colours no token names: ${left.join(" ")}`);
+  return `<g style="fill:var(--piece-edge)">${markup}</g>`;
+};
+
+const DRAWN = {
+  fantasy: { author: "Maurizio Monge", licence: "MIT" },
+  spatial: { author: "Maurizio Monge", licence: "MIT" },
+  celtic: { author: "Maurizio Monge", licence: "MIT" },
+};
+
+const chessnut = Object.fromEntries(Object.entries(sources).map(([role, svg]) => [role, inked(svg)]));
+const catalog = {
+  chessnut: {
+    author: "Alexis Luengas",
+    licence: "Apache-2.0",
+    frame: `${union.left} ${union.top} ${union.right - union.left} ${union.bottom - union.top}`,
+    white: chessnut,
+    black: chessnut,
+  },
+};
+for (const [name, credit] of Object.entries(DRAWN)) {
+  const files = {};
+  for (const [side, letter] of Object.entries(SIDES))
+    for (const [role, file] of Object.entries(ROLES))
+      files[`${side}.${role}`] = await Deno.readTextFile(new URL(`${name}/${letter}${file.slice(1)}.svg`, here));
+  const drawn = (side) =>
+    Object.fromEntries(Object.keys(ROLES).map((role) => [role, tokened(files[`${side}.${role}`], side, `${name}-${SIDES[side]}${role}`)]));
+  catalog[name] = { ...credit, frame: frameOf(Object.values(files)), white: drawn("white"), black: drawn("black") };
+}
+
+const vector = `export const PIECESETS = ${JSON.stringify(catalog, null, 2)};\n`;
+for (const kit of KITS) await Deno.writeTextFile(new URL(`../../../../${kit}/buffer/kit/pieces.js`, here), vector);

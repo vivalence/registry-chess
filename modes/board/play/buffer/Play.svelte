@@ -5,6 +5,7 @@
   import Seat from "./kit/Seat.svelte";
   import Moves from "./kit/Moves.svelte";
   import Setup from "./panels/Setup.svelte";
+  import Design from "./panels/Design.svelte";
   import { captures } from "./kit/material.js";
   import { open as openMode, show, TABS } from "./kit/open.js";
 
@@ -245,6 +246,7 @@
   const panels = $derived([
     { id: "setup", label: locked ? "match" : "setup" },
     { id: "moves", label: `moves ${plies}` },
+    { id: "design", label: "design" },
   ]);
   const unanswered = $derived($data.marks?.filter((mark) => mark.kind !== "agent").length ?? 0);
   const byAgent = $derived($data.marks?.filter((mark) => mark.kind === "agent").length ?? 0);
@@ -291,7 +293,7 @@
   {/snippet}
 
   {#snippet board()}
-    <Board {fen} {orientation} {lastMove} dests={myMove ? ($data.dests ?? {}) : {}} movable={myMove && !busy} check={Boolean($data.check)} onmove={move} />
+    <Board {fen} {orientation} {lastMove} dests={myMove ? ($data.dests ?? {}) : {}} movable={myMove && !busy} check={Boolean($data.check)} pieceset={$data.pieceset} theme={$data.theme} onmove={move} />
   {/snippet}
 
   {#snippet lower()}
@@ -313,7 +315,14 @@
   {/snippet}
 
   {#snippet body()}
-    {#if panel === "moves"}
+    {#if panel === "design"}
+      <Design
+        pieceset={$data.pieceset}
+        theme={$data.theme}
+        {busy}
+        onpieceset={(pieceset) => guard("pieceset", () => call("view", { buffer: buffer.id, pieceset }))}
+        ontheme={(theme) => guard("theme", () => call("view", { buffer: buffer.id, theme }))} />
+    {:else if panel === "moves"}
       <Moves
         sans={$data.sans ?? []}
         cursor={at}

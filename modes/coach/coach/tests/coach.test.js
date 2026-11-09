@@ -14,7 +14,7 @@ describe("coach — headless, offering skills", () => {
     expect([...coach.manifest.traits].sort()).toEqual(["HARNESSED", "TOOLING"]);
     expect(coach.views).toBeUndefined();
     expect(coach.aperture).toBeUndefined();
-    expect([...coach.tools.trie.keys()].sort()).toEqual(["ask", "explain", "review", "suggest", "teach"]);
+    expect(coach.tools.patterns.map((pattern) => pattern.nature).sort()).toEqual(["ask", "explain", "review", "suggest", "teach"]);
   });
 
   it("P-own-tools: the coach's reads are armed on its own harness, never offered", async () => {
@@ -22,7 +22,7 @@ describe("coach — headless, offering skills", () => {
     const probe = new Vector().graft(coach.harness).open("probe", () => null);
     await steer.dispatch.invoke(probe, "/probe", steer.strategy.direct)(ctx);
     expect((await shape.primer.load(ctx.hallucination.primer, ctx)).coach).toMatch(/You are a chess coach/);
-    expect([...ctx.hallucination.tools.trie.keys()].sort()).toEqual(["analyse", "board", "game", "games", "puzzle", "solution"]);
+    expect(ctx.hallucination.tools.patterns.map((pattern) => pattern.nature).sort()).toEqual(["analyse", "board", "game", "games", "puzzle", "solution"]);
   });
 });
 
@@ -38,7 +38,7 @@ describe("coach — reads and skills", { sanitizeResources: false, sanitizeOps: 
   let puzzle;
   // a skill as the game calls it: the caller is the play mode, not the coach
   const fromPlay = (path, input) =>
-    steer.dispatch.invoke(desk.mode.tools, path, steer.strategy.direct)({ ...shard.context.lift(contexts.host, rig.daemon), mode: board.mode, user: rig.user, thread: rig.thread, input });
+    steer.dispatch.invoke(desk.mode.tools, path, steer.strategy.direct)({ ...shard.context.lift(contexts.daemonDie, rig.daemon), mode: board.mode, user: rig.user, thread: rig.thread, input });
 
   beforeAll(async () => {
     rig = await mount({ engine: engine() });

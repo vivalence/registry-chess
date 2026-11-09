@@ -7,7 +7,7 @@ const rules = (ctx, path, input) => ctx.call.rules[path]({ ...ctx, input, output
 
 const BUFFER = v.string().desc("The match buffer's id. Example: \"01JQ…\".");
 
-export const VIEWED = ["orientation", "render"];
+export const VIEWED = ["orientation", "pieceset", "theme", "render"];
 
 export const kept = (data) => Object.fromEntries(VIEWED.filter((key) => key in data).map((key) => [key, data[key]]));
 
@@ -242,8 +242,14 @@ aperture
   .open(
     {
       nature: "/view",
-      valence: 'How the board shows this match — the side it is drawn from, how a tty paints its pieces; the game is untouched. Example: { buffer: "01JQ…", orientation: "black" }.',
-      input: v.object({ buffer: BUFFER, orientation: MATCH.orientation, render: MATCH.render }),
+      valence: 'How the board shows this match — the side it is drawn from, which pieces and theme a web board draws, how a tty paints its pieces; the game is untouched. Example: { buffer: "01JQ…", orientation: "black" }.',
+      input: v.object({
+        buffer: BUFFER,
+        orientation: MATCH.orientation,
+        pieceset: MATCH.pieceset,
+        theme: MATCH.theme,
+        render: MATCH.render,
+      }),
     },
     async (ctx) => {
       const { buffer, data } = await load(ctx, ctx.input.buffer);

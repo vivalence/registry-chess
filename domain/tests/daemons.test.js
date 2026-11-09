@@ -84,7 +84,7 @@ describe("chess e4 beside italian casa — two daemons on one datamap, each row 
     within(async () => {
       const posed = await daemons.chess.entities.literal.pose({ id: "scholar", fen: SCHOLAR, solution: ["h5f7"], rating: 600, themes: [] });
       const attempt = (moves) =>
-        steer.dispatch.invoke(domain.aperture, "/puzzle/attempt", steer.strategy.direct)({ ...shard.context.lift(contexts.host, daemons.chess), user, mode: null, thread: null, input: { puzzle: posed.id, moves } });
+        steer.dispatch.invoke(domain.aperture, "/puzzle/attempt", steer.strategy.direct)({ ...shard.context.lift(contexts.daemonDie, daemons.chess), user, mode: null, thread: null, input: { puzzle: posed.id, moves } });
       expect((await attempt(["h5h7"])).status).toBe("FAILED");
       expect((await attempt(["h5f7"])).status).toBe("SOLVED");
       await sleep.ms(20);

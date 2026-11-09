@@ -12,7 +12,7 @@ export const OCCUPANT = v
     v.object({ kind: v.const("user"), user: v.string().optional().desc('The identity in the seat; the caller when absent. Example: "01JQ…".') }),
     v.object({
       kind: v.const("hallucinator"),
-      tune: v.string().optional().desc('The cortex tune the seat plays with. Example: "capable".'),
+      tier: v.primitives.hallucination.Tier.optional().desc('The tier the seat plays with. Example: "capable"'),
       assisted: v.boolean().default(false).optional().desc("Whether the model sees the engine's assessment before choosing. Example: true."),
       persona: v.string().optional().desc('A voice for the seat, one sentence. Example: "a romantic attacker who loves sacrifices".'),
     }),
@@ -87,6 +87,8 @@ export const MATCH = {
   shown: v.object({ fen: v.string(), turn: v.enum(["white", "black"]), lastMove: v.string().optional() }).optional().desc("The rewound position the board is drawing, computed at every save; absent when the board shows the tip."),
   variations: v.array(VARIATION).default([]).desc("The lines this match left behind, in the order they were abandoned."),
   orientation: v.enum(["white", "black"]).optional().desc('The side the board is drawn from; absent, the user\'s seat. Example: "black".'),
+  pieceset: v.enum(["glyph", "chessnut", "fantasy", "spatial", "celtic"]).optional().desc('The pieces a web board draws; absent, chessnut. Example: "glyph".'),
+  theme: v.enum(["inherit", "brown", "blue", "green"]).optional().desc('The squares and pieces\' colours a web board draws; absent or inherit, the box\'s theme. Example: "green".'),
   render: v.enum(["auto", "image", "glyph"]).optional().desc('How a tty board paints its pieces; absent or auto, images where the terminal draws them on its grid, else glyphs. Example: "glyph".'),
 };
 
