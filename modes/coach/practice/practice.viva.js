@@ -12,7 +12,7 @@ export const manifest = {
     "Agentic practice: a coach that plays you. The coach is a hallucinator armed with the board, the engine's assessment and one move " +
     "per turn; it answers your move on the board and in the dock — what you did, what to look for. The board is the buffer; the talk is the thread.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED", "HARNESSED", "CONVERSATIONAL", "TOOLING"],
+  traits: ["VIEWABLE", "EXPOSED", "HARNESS", "CONVERSATION", "TOOLING"],
 };
 
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

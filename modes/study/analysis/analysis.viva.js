@@ -11,7 +11,7 @@ export const manifest = {
     "The post-mortem. A game — from the corpus or pasted as PGN — on a board you step through; the engine's evaluation at every " +
     "ply, every move judged by win percentage lost, accuracy per side; a hallucinator that explains one move in words from what the engine found.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED", "HARNESSED"],
+  traits: ["VIEWABLE", "EXPOSED", "HARNESS"],
 };
 
 const EXPLAIN = [

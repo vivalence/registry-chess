@@ -1,10 +1,11 @@
 <script>
-  // the board: 64 squares, unicode glyphs, drag or click to move. it knows no rules — the caller
+  // the board: 64 squares, pieces drawn in the game's `pieceset` (a drawn set or glyph), drag or click to move. it knows no rules — the caller
   // hands it the legal destinations per square (the domain's `dests`) and hears `onmove(uci)`.
   // `tints` marks squares by name, "good" or "bad" — a riddle's wanted move and the move played.
   import { play as sound } from "./sound.js";
+  import { PIECESETS } from "./pieces.js";
 
-  const { fen, orientation = "white", lastMove = null, dests = {}, movable = false, check = false, hint = null, tints = {}, onmove = null } = $props();
+  const { fen, orientation = "white", lastMove = null, dests = {}, movable = false, check = false, pieceset = "chessnut", theme = "inherit", hint = null, tints = {}, onmove = null } = $props();
 
   // a move that lands sounds — the user's or the other seat's, or a step through a game. the
   // first render is silent (a loaded game arrives with its last move), and so is a reset
@@ -17,6 +18,7 @@
 
   const FILES = "abcdefgh";
   const GLYPH = { k: "♚︎", q: "♛︎", r: "♜︎", b: "♝︎", n: "♞︎", p: "♟︎" };
+  const GLYPH_SIZE = { k: 136, q: 117, r: 117, b: 117, n: 112, p: 117 };
   const PROMOTIONS = ["q", "r", "b", "n"];
   const SLOP = 4;
 
@@ -63,7 +65,7 @@
         out.push({
           square,
           light: (rank + file) % 2 === 1,
-          glyph: piece ? GLYPH[piece.toLowerCase()] : "",
+          role: piece ? piece.toLowerCase() : "",
           white: piece ? isWhite(piece) : true,
           selected: square === selected,
           last: last.includes(square),
@@ -74,7 +76,8 @@
           tint: tints?.[name(square)] ?? null,
           grab: canMove(square) || targets.includes(square),
           lifted: drag?.from === square,
-          coord: (row === 7 ? FILES[file] : "") + (col === 0 ? String(rank + 1) : ""),
+          rank: col === 0 ? String(rank + 1) : "",
+          file: row === 7 ? FILES[file] : "",
         });
       }
     }
@@ -153,24 +156,32 @@
   const dragged = $derived(drag ? pieces[drag.from] : null);
 </script>
 
-<div class="board" class:movable>
+{#snippet glyph(role)}
+  <text x="50" y="91" text-anchor="middle" font-size={GLYPH_SIZE[role]}>{GLYPH[role]}</text>
+{/snippet}
+
+<div class="board" class:movable data-board={theme}>
   <div class="grid" bind:this={grid} onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up}>
     {#each squares as s (s.square)}
       <div class="sq" class:light={s.light} class:dark={!s.light} class:selected={s.selected} class:last={s.last} class:check={s.check} class:hint={s.hint} class:good={s.tint === "good"} class:bad={s.tint === "bad"} class:grab={s.grab}>
-        {#if s.glyph}<span class="piece" class:white={s.white} class:black={!s.white} class:lifted={s.lifted}>{s.glyph}</span>{/if}
+        {#if s.role && pieceset === "glyph"}<svg class="piece glyph" class:white={s.white} class:black={!s.white} class:lifted={s.lifted} data-role={s.role} viewBox="0 0 100 100">{@render glyph(s.role)}</svg>
+        {:else if s.role}<svg class="piece" class:white={s.white} class:black={!s.white} class:lifted={s.lifted} data-role={s.role} viewBox={PIECESETS[pieceset].frame} preserveAspectRatio="xMidYMax meet">{@html PIECESETS[pieceset][s.white ? "white" : "black"][s.role]}</svg>{/if}
         {#if s.dot}<span class="dot"></span>{/if}
         {#if s.ring}<span class="ring"></span>{/if}
-        {#if s.coord}<span class="coord">{s.coord}</span>{/if}
+        {#if s.rank}<span class="coord rank">{s.rank}</span>{/if}
+        {#if s.file}<span class="coord file">{s.file}</span>{/if}
       </div>
     {/each}
   </div>
-  {#if drag && dragged}
-    <span class="ghost" class:white={isWhite(dragged)} class:black={!isWhite(dragged)} style:left="{drag.x}px" style:top="{drag.y}px">{GLYPH[dragged.toLowerCase()]}</span>
+  {#if drag && dragged && pieceset === "glyph"}
+    <svg class="ghost glyph" class:white={isWhite(dragged)} class:black={!isWhite(dragged)} style:left="{drag.x}px" style:top="{drag.y}px" viewBox="0 0 100 100">{@render glyph(dragged.toLowerCase())}</svg>
+  {:else if drag && dragged}
+    <svg class="ghost" class:white={isWhite(dragged)} class:black={!isWhite(dragged)} style:left="{drag.x}px" style:top="{drag.y}px" viewBox={PIECESETS[pieceset].frame}>{@html PIECESETS[pieceset][isWhite(dragged) ? "white" : "black"][dragged.toLowerCase()]}</svg>
   {/if}
   {#if promoting}
     <div class="promotion">
       {#each PROMOTIONS as piece}
-        <button class:white={turn === "white"} class:black={turn === "black"} onclick={() => promote(piece)}>{GLYPH[piece]}</button>
+        <button class:white={turn === "white"} class:black={turn === "black"} class:glyph={pieceset === "glyph"} onclick={() => promote(piece)}>{#if pieceset === "glyph"}<svg viewBox="0 0 100 100">{@render glyph(piece)}</svg>{:else}<svg viewBox={PIECESETS[pieceset].frame}>{@html PIECESETS[pieceset][turn][piece]}</svg>{/if}</button>
       {/each}
       <button class="cancel" onclick={cancel} title="keep the pawn where it is">✕</button>
     </div>
@@ -224,30 +235,49 @@
     cursor: grab;
   }
   .piece {
-    font-variant-emoji: text;
-    font-size: 9.5cqw;
-    line-height: 1;
+    position: absolute;
+    inset: 6%;
+    width: 88%;
+    height: 88%;
+    fill: var(--piece-ink);
     pointer-events: none;
   }
   .piece.white,
   .ghost.white,
   .promotion button.white {
-    color: var(--pw);
-    text-shadow: 0 0 2px var(--pw-shadow), 0 1px 1px var(--pw-shadow);
+    --piece-fill: var(--pw);
+    --piece-ink: var(--pb);
+    --piece-shade: color-mix(in srgb, var(--pw) 78%, var(--pb));
+    --piece-edge: var(--pb);
+    filter: drop-shadow(0 0.15cqw 0.2cqw var(--pw-shadow));
   }
   .piece.black,
   .ghost.black,
   .promotion button.black {
-    color: var(--pb);
-    text-shadow: 0 0 2px var(--pb-shadow), 0 1px 1px var(--pb-shadow);
+    --piece-fill: var(--pb);
+    --piece-ink: var(--pw);
+    --piece-shade: color-mix(in srgb, var(--pb) 50%, var(--pw));
+    --piece-edge: var(--pb);
+    filter: drop-shadow(0 0.15cqw 0.2cqw var(--pb-shadow));
+  }
+  .glyph text {
+    font-family: Menlo, "DejaVu Sans Mono", monospace;
+    fill: var(--piece-fill);
+    font-variant-emoji: text;
+  }
+  .piece.glyph,
+  .ghost.glyph,
+  .promotion button.glyph svg {
+    overflow: visible;
+    filter: drop-shadow(0 0 0.6px var(--piece-ink)) drop-shadow(0 0 0.6px var(--piece-ink));
   }
   .piece.lifted {
     opacity: 0.25;
   }
   .dot {
     position: absolute;
-    width: 26%;
-    height: 26%;
+    width: 32%;
+    height: 32%;
     border-radius: 50%;
     background: var(--hl-dot);
     pointer-events: none;
@@ -255,18 +285,24 @@
   .ring {
     position: absolute;
     inset: 0;
-    border: 4px solid var(--hl-dot);
-    border-radius: 2px;
-    box-sizing: border-box;
+    background: radial-gradient(transparent 0 78%, var(--hl-dot) 79%);
     pointer-events: none;
   }
   .coord {
     position: absolute;
-    left: 3px;
-    bottom: 1px;
-    font-family: var(--code);
-    font-size: 2.4cqw;
+    font-family: var(--head);
+    font-size: 2.6cqw;
+    font-weight: 700;
+    line-height: 1;
     pointer-events: none;
+  }
+  .coord.rank {
+    top: 0.6cqw;
+    left: 0.7cqw;
+  }
+  .coord.file {
+    bottom: 0.6cqw;
+    right: 0.7cqw;
   }
   .light .coord {
     color: var(--sq-dark);
@@ -275,11 +311,11 @@
     color: var(--sq-light);
   }
   .ghost {
-    font-variant-emoji: text;
     position: absolute;
+    width: 11cqw;
+    height: 11cqw;
+    fill: var(--piece-ink);
     transform: translate(-50%, -50%) scale(1.15);
-    font-size: 9.5cqw;
-    line-height: 1;
     pointer-events: none;
     z-index: 5;
   }
@@ -294,8 +330,14 @@
     z-index: 6;
   }
   .promotion button {
+    display: grid;
+    place-items: center;
+    font-variant-emoji: text;
     font-size: 11cqw;
     line-height: 1;
+    width: 13cqw;
+    height: 13cqw;
+    fill: var(--piece-ink);
     padding: 8px 14px;
     border: 1px solid var(--b0);
     border-radius: 4px;

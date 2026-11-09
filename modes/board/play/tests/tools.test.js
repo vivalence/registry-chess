@@ -19,7 +19,7 @@ describe("play mode — the agent's hands", { sanitizeResources: false, sanitize
   afterAll(async () => rig?.close());
 
   it("P-talk-and-seat: the seat's voice rides object calls, the coach's talk rides dialogue — never both", () => {
-    expect([...play.harness.trie.keys()].sort()).toEqual(["dialogue", "object"]);
+    expect(play.harness.patterns.map((pattern) => pattern.nature).sort()).toEqual(["dialogue", "object"]);
     expect(SEAT).toMatch(/exactly one legal move as UCI/);
     expect(TALK).toMatch(/only when that person asks you to/);
     expect(TALK).toMatch(/coach_explain/);
@@ -37,7 +37,7 @@ describe("play mode — the agent's hands", { sanitizeResources: false, sanitize
   it("P-beside: the talk sees the thread's newest board and the engine's lines there before it asks", async () => {
     const buffer = await board.call("/match/create", { seats: { white: { kind: "user" }, black: { kind: "user" } } });
     await board.call("/match/move", { buffer: buffer.id, uci: "d2d4" });
-    const ctx = { ...shard.context.lift(contexts.host, rig.daemon), mode: board.mode, thread: rig.thread, hallucination: { primer: new Vector(), policy: {} } };
+    const ctx = { ...shard.context.lift(contexts.daemonDie, rig.daemon), mode: board.mode, thread: rig.thread, hallucination: { primer: new Vector(), policy: {} } };
     const probe = new Vector().graft(play.harness);
     probe.branch("dialogue").open("probe", () => null);
     await steer.dispatch.invoke(probe, "/dialogue/probe", steer.strategy.direct)(ctx);

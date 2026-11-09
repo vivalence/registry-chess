@@ -17,9 +17,9 @@ const newest = (rows) => [...rows].sort((a, b) => String(b.updatedAt ?? "").loca
 
 // the terminal moves to a thread and its buffer — the last step of open, or a caller's own once
 // the buffer is filled
-export const show = (terminal, { thread, buffer }) => {
-  terminal.thread = thread;
-  terminal.buffer = buffer;
+export const show = async (terminal, { thread, buffer }) => {
+  await terminal.setThread(thread);
+  await terminal.setBuffer(buffer);
 };
 
 // `fresh` forces a new buffer on the mode's thread (the library opens each game in its own);
@@ -30,7 +30,10 @@ export async function open(terminal, daemon, tab, { fresh = false, data = {}, sh
   const threads = daemon.entities.thread.$entities.get().filter((row) => (row.mode?.id ?? row.mode) === mode.id);
   let thread = newest(threads);
   if (!thread) {
-    thread = await daemon.entities.thread.create({ mode: mode.id });
+    thread = await daemon.entities.thread.create({
+      user: terminal.client.runtime.lighthouse.user.id,
+      mode: mode.id,
+    });
     daemon.entities.thread.resolve?.(thread);
   }
   const buffers = fresh ? [] : (thread.$buffers?.get?.() ?? []);

@@ -4,7 +4,7 @@ import { finish, load, play, step, tick } from "../aperture/index.js";
 
 // the match's hands for an agent: read a board, list the boards, move for a side. the same
 // functions the doors run — one path for the view and the agent. armed as match_* on this mode's
-// harness; an AGENTIC mode elsewhere sees them as play_match_*.
+// harness; a thread elsewhere in chess loads them with tool_load /board/play, as board_play_match_*.
 
 const rules = (ctx, path, input) => ctx.call.rules[path]({ ...ctx, input, output: undefined });
 

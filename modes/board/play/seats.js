@@ -68,8 +68,8 @@ const ask = async (ctx, { seat, data, legal, lines, tried, thread }) => {
     thread,
     turns: [{ role: "user", parts: [{ type: "text", text: brief }] }],
     output: ANSWER,
-    ...(seat.tune && { tune: seat.tune }),
+    ...(seat.tier && { tier: seat.tier }),
   });
-  const object = render?.output?.object ?? {};
+  const object = render?.product?.object ?? {};
   return { uci: String(object.uci ?? "").trim(), comment: object.comment };
 };

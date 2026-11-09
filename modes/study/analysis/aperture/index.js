@@ -169,7 +169,7 @@ aperture
         .filter(Boolean)
         .join("\n");
       const render = await ctx.mode.harness.object.render({ thread: buffer.thread.id, turns: [{ role: "user", parts: [{ type: "text", text: brief }] }], output: ANSWER });
-      const explanation = render?.output?.object?.explanation ?? "";
+      const explanation = render?.product?.object?.explanation ?? "";
       data.explanations = { ...data.explanations, [String(judgement.ply)]: explanation };
       await save(ctx, buffer, data);
       return { ply: judgement.ply, explanation };

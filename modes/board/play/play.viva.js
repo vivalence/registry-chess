@@ -16,7 +16,7 @@ export const manifest = {
     "A board and two seats. The buffer holds the live game — position, moves, clocks, who sits; a seat is a user, the engine, " +
     "or a hallucinator that may see the engine's assessment before it moves. A finished game seals into the corpus as a literal.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED", "HARNESSED", "CONVERSATIONAL", "TOOLING", "AGENTIC"],
+  traits: ["VIEWABLE", "EXPOSED", "HARNESS", "CONVERSATION", "TOOLING"],
 };
 
 export const buffer = v
@@ -36,6 +36,6 @@ export const views = [
 
 export const keymap = new Vector()
   .open({ nature: "leader/g/n", valence: "new game — you against the engine, blitz. Example: ctrl-v g n" }, (ctx) =>
-    ctx.mode.call.match.create({ seats: SEATED, clock: BLITZ, thread: ctx.client.terminal.thread.id }))
+    ctx.terminal.mode.call.match.create({ seats: SEATED, clock: BLITZ, thread: ctx.terminal.thread.id }))
   .open({ nature: "leader/g/r", valence: "resign the game on the frame. Example: ctrl-v g r" }, (ctx) =>
-    ctx.mode.call.match.resign({ buffer: ctx.client.terminal.buffer.id }));
+    ctx.terminal.mode.call.match.resign({ buffer: ctx.terminal.buffer.id }));

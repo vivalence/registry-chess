@@ -12,9 +12,9 @@ const ENTRY = new URL("../buffer/Analysis.svelte", import.meta.url).pathname;
 const LADDER = new URL("../buffer/kit/Ladder.svelte", import.meta.url).pathname;
 
 describe("analysis mode — the assembly", () => {
-  it("P-manifest: study/analysis is VIEWABLE EXPOSED HARNESSED with a buffer and a view", () => {
+  it("P-manifest: study/analysis is VIEWABLE EXPOSED HARNESS with a buffer and a view", () => {
     expect(analysis.manifest.type).toBe("study");
-    expect([...analysis.manifest.traits].sort()).toEqual(["EXPOSED", "HARNESSED", "VIEWABLE"]);
+    expect([...analysis.manifest.traits].sort()).toEqual(["EXPOSED", "HARNESS", "VIEWABLE"]);
     expect(analysis.views[0].mount).toBe("buffer/Analysis.svelte");
   });
 

@@ -3,7 +3,7 @@ import { analyse, moments, position, record } from "../tools/index.js";
 
 // the coach's skills: each runs the coach's OWN harness — its voice, its tools (tools/index.js),
 // the domain's — and answers in a shape the code checks before it leaves. a tool reads; a skill
-// thinks. this vector is what the coach offers: an AGENTIC game arms it as coach_*.
+// thinks. this vector is what the coach offers: a game's thread loads it with tool_load /coach/coach, as coach_coach_*.
 
 const domain = (ctx, door, path, input) => ctx.call[door][path]({ ...ctx, input, output: undefined });
 
@@ -12,7 +12,7 @@ const coach = (ctx) => ctx.modes.coach?.coach;
 const ABSENT = { condition: "ERROR", message: "the coach is not kernelled on this daemon — @chess/coach/coach" };
 
 const think = (mode, thread, text, output) =>
-  mode.harness.object.render({ thread, turns: [{ role: "user", parts: [{ type: "text", text }] }], output }).then((render) => render?.output?.object ?? {});
+  mode.harness.object.render({ thread, turns: [{ role: "user", parts: [{ type: "text", text }] }], output }).then((render) => render?.product?.object ?? {});
 
 const numbered = (sans) => sans.map((san, index) => (index % 2 === 0 ? `${index / 2 + 1}. ${san}` : san)).join(" ");
 

@@ -126,7 +126,7 @@
   const digest = (value) => {
     if (value == null) return "";
     if (typeof value === "string") return value.split("\n")[0].slice(0, 90);
-    if (typeof value === "object") return digest(value.message ?? value.output ?? value.content ?? Object.values(value)[0]);
+    if (typeof value === "object") return digest(value.message ?? value.product ?? value.content ?? Object.values(value)[0]);
     return String(value).slice(0, 90);
   };
   const entries = $derived.by(() => {
@@ -140,7 +140,7 @@
         if (part?.type === "text" && part.text?.trim()) out.push({ who: item.role === "user" ? "you" : "coach", text: part.text.trim() });
         if (part?.type === "tool_use") {
           const result = results.get(part.id);
-          out.push({ who: "tool", name: part.name ?? "tool", text: result ? digest(result.output ?? result.content) : digest(part.input), failed: result?.condition === "ERROR" });
+          out.push({ who: "tool", name: part.name ?? "tool", text: result ? digest(result.product ?? result.content) : digest(part.input), failed: result?.condition === "ERROR" });
         }
       }
     }

@@ -14,7 +14,7 @@ const { describe, it, expect, beforeAll, afterAll } = specimen;
 describe("practice mode — the assembly", () => {
   it("P-manifest: coach/practice is the full agentic set with a buffer and a view, a harness and four tools", () => {
     expect(practice.manifest.type).toBe("coach");
-    expect([...practice.manifest.traits].sort()).toEqual(["CONVERSATIONAL", "EXPOSED", "HARNESSED", "TOOLING", "VIEWABLE"]);
+    expect([...practice.manifest.traits].sort()).toEqual(["CONVERSATION", "EXPOSED", "HARNESS", "TOOLING", "VIEWABLE"]);
     expect(practice.views[0].mount).toBe("buffer/Practice.svelte");
     const armed = Object.keys(shape.strip(practice.tools).branches.practice.branches).sort();
     expect(armed).toEqual(["assess", "board", "elo", "move", "note"]);
@@ -109,7 +109,7 @@ describe("practice mode — the coach's hands", { sanitizeResources: false, sani
     const records = [];
     for await (const record of await coach.call("/practice/turn", { buffer: buffer.id })) records.push(record);
     expect(records.length).toBe(1);
-    expect(records[0].output.message).toMatch(/Nice opening/);
+    expect(records[0].product.message).toMatch(/Nice opening/);
   });
 
   it("P-elo: the student's last move gets its ladder — through the tool and the door — and the buffer keeps it", async () => {
@@ -138,7 +138,7 @@ describe("practice mode — the coach's hands", { sanitizeResources: false, sani
     expect(reset.data.strength).toBe("strong");
     const records = [];
     for await (const record of await coach.call("/practice/ask", { buffer: buffer.id, text: "why not Qxb7?" })) records.push(record);
-    expect(records[0].output.message).toMatch(/Nice opening/);
+    expect(records[0].product.message).toMatch(/Nice opening/);
   });
 
   it("P-render: the view server-renders the live row and the thread — seats, the rail, the coach's note, the talk, the ladder", async () => {
@@ -150,7 +150,7 @@ describe("practice mode — the coach's hands", { sanitizeResources: false, sani
     const turns = [
       { id: "t1", role: "user", parts: [{ type: "text", text: "The student played e4." }] },
       { id: "t2", role: "assistant", parts: [{ type: "tool_use", id: "use-1", name: "practice_assess", input: { buffer: held.id } }] },
-      { id: "t3", role: "user", parts: [{ type: "tool_result", tool_use_id: "use-1", output: { message: "ScriptedFish depth 12 (black to move):\n1. 0.20 — e7e5" } }] },
+      { id: "t3", role: "user", parts: [{ type: "tool_result", tool_use_id: "use-1", product: { message: "ScriptedFish depth 12 (black to move):\n1. 0.20 — e7e5" } }] },
       { id: "t4", role: "assistant", parts: [{ type: "text", text: "Nice opening move. Watch the centre." }] },
     ];
     const { text, body } = await renderView(ENTRY, { buffer: { id: held.id, data: held.data }, thread: { id: "thread-1", $turns: atom(turns) } });
