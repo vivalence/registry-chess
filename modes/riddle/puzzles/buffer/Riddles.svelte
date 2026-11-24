@@ -7,7 +7,7 @@
   // riddles in five levels. the buffer carries the riddle, the line played, the tally and the
   // board's affordances; the view plays, nudges, reveals, skips — nothing here asks the wire
   // from an effect.
-  const { terminal, buffer, surface } = $props();
+  const { terminal, buffer, skin } = $props();
   const data = buffer.$data;
 
   const LEVELS = ["novice", "apprentice", "club", "expert", "master"];

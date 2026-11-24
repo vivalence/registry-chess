@@ -1,7 +1,7 @@
 import { RGBA } from "@opentui/core";
 
-export const INK_TOKENS = ["surfaceLift", "textStrong"];
-export const GROUND_TOKENS = ["surfaceSunk", "boundary", "boundaryStrong", "divider", "textMuted", "textLight", "textInk"];
+export const INK_TOKENS = ["planeLift", "textStrong"];
+export const GROUND_TOKENS = ["planeSunk", "boundary", "boundaryStrong", "divider", "textMuted", "textLight", "textInk"];
 export const CHECKERED = 1.7;
 
 const linear = (channel) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);

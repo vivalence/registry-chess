@@ -12,7 +12,7 @@
   // mounted by the frame with { terminal, buffer, surface }: the mode and the thread ride the buffer row. the buffer IS the
   // match — position, moves, seats, clocks, the legal destinations — and every change lands on
   // $data through its subscription, so no effect here ever calls the wire.
-  const { terminal, buffer, surface } = $props();
+  const { terminal, buffer, skin } = $props();
   const data = buffer.$data;
 
   const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

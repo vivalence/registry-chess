@@ -20,10 +20,10 @@ const TWO = {
 };
 
 describe("riddle mode — the assembly", () => {
-  it("P-manifest: riddle/puzzles is VIEWABLE EXPOSED with a buffer and a view", () => {
+  it("P-manifest: riddle/puzzles is SURFACED EXPOSED with a buffer and a view", () => {
     expect(riddles.manifest.type).toBe("riddle");
-    expect([...riddles.manifest.traits].sort()).toEqual(["EXPOSED", "VIEWABLE"]);
-    expect(riddles.views[0].mount).toBe("buffer/Riddles.svelte");
+    expect([...riddles.manifest.traits].sort()).toEqual(["EXPOSED", "SURFACED"]);
+    expect(riddles.surfaces[0].mount).toBe("buffer/Riddles.svelte");
     expect(riddles.LEVELS).toEqual(["novice", "apprentice", "club", "expert", "master"]);
   });
 

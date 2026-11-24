@@ -53,7 +53,7 @@ export async function build(entry, store) {
 // the props a view receives — { terminal, buffer, surface } — from a buffer row (or plain data): stores
 // where the view expects stores, the mode and the thread on the row, a mode whose `call` never
 // answers (SSR runs no effect and awaits nothing).
-export function props({ buffer = null, data = null, mode = {}, thread = null, daemon = null, terminal = null, surface = { place: "frame" } } = {}) {
+export function props({ buffer = null, data = null, mode = {}, thread = null, daemon = null, terminal = null, skin = { place: "frame" } } = {}) {
   const row = buffer ?? { id: "buffer-ssr", data: data ?? {} };
   const never = new Proxy(() => new Promise(() => {}), { get: (_, key) => (key === "then" ? undefined : never) });
   const host = daemon ?? { connection: { call: () => new Promise(() => {}) }, entities: { mode: { $entities: atom([]) }, thread: { $entities: atom([]) } } };
@@ -61,7 +61,7 @@ export function props({ buffer = null, data = null, mode = {}, thread = null, da
   return {
     terminal: terminal ?? { thread: held, buffer: row, setDockCollapsed() {} },
     buffer: { id: row.id, $data: atom(row.data ?? {}), mount() {}, mode: { id: "mode-ssr", call: never, daemon: host, ...mode }, thread: held, ...row },
-    surface,
+    skin,
   };
 }
 

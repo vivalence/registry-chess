@@ -9,7 +9,7 @@
   // agentic practice: the board is the buffer, the talk is the buffer.thread. the coach answers the
   // student's move through its tools on /practice/turn; the same thread shows here in the talk
   // panel and in anima's dock alike. nothing here asks the wire from an effect.
-  const { terminal, buffer, surface } = $props();
+  const { terminal, buffer, skin } = $props();
   const data = buffer.$data;
 
   const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

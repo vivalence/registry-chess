@@ -168,7 +168,7 @@ describe("play view — the pure parts", () => {
     for (const palette of [PALETTE, NORTHSEA]) {
       const pair = grounds(palette);
       expect(pair.light).not.toBe(pair.dark);
-      expect([inks(palette).white, inks(palette).black].sort()).toEqual(["surfaceLift", "textStrong"]);
+      expect([inks(palette).white, inks(palette).black].sort()).toEqual(["planeLift", "textStrong"]);
     }
     expect(grounds(PALETTE)).toEqual({ light: "boundaryStrong", dark: "textMuted" });
   });
@@ -217,7 +217,7 @@ describe("play view — the scaled image, the one library exception", { sanitize
 
 describe("play view — the square image", () => {
   it("T-tile: a square image is its tone with the mark baked in — a dot in the middle of a target, corners on a capture — the piece over it bottom-aligned with the opposite ink as rim", () => {
-    const hex = { ground: "#5F7286", accent: "#3D528C", surface: "#EDF0F4", body: "#FFFFFF", rim: "#0E1A25" };
+    const hex = { ground: "#5F7286", accent: "#3D528C", plane: "#EDF0F4", body: "#FFFFFF", rim: "#0E1A25" };
     const pixel = (image, x, y) => "#" + [...image.raw("rgba8").data.slice((y * image.width + x) * 4, (y * image.width + x) * 4 + 3)].map((value) => value.toString(16).padStart(2, "0")).join("").toUpperCase();
     const size = { width: 77, height: 80 };
     const dot = painted({ role: null, ground: hex.ground, accent: hex.accent, mark: "dot", size });
@@ -393,7 +393,7 @@ describe("play view — mounted in a tty", { sanitizeResources: false, sanitizeO
   });
 
   for (const [theme, palette] of [["porcelain", PALETTE], ["northsea", NORTHSEA]]) {
-    it(`T-image ${theme}: where images are adequate every square is one opaque image of exactly its cells on its own tone, pieces and marks baked in; the column right of the board is plain surface cells; render glyph turns them off`, async () => {
+    it(`T-image ${theme}: where images are adequate every square is one opaque image of exactly its cells on its own tone, pieces and marks baked in; the column right of the board is plain plane cells; render glyph turns them off`, async () => {
       const { setup, buffer, close } = await mounted({ width: 91, height: 45, data: afterE5, capabilities: KITTY, palette });
       const images = all(setup.renderer.root, (node) => node instanceof ImageRenderable);
       expect(images.length).toBe(64);
@@ -408,7 +408,7 @@ describe("play view — mounted in a tty", { sanitizeResources: false, sanitizeO
         expect(raw.data.every((value, index) => index % 4 !== 3 || value === 255)).toBe(true);
       }
       const grid = find(setup.renderer.root, "board");
-      for (let row = 0; row < grid.height; row++) expect(background(setup, { x: grid.x + grid.width - GUTTER.right, y: grid.y + row }).equals(RGBA.fromHex(palette.surface)), `right gutter ${row}`).toBe(true);
+      for (let row = 0; row < grid.height; row++) expect(background(setup, { x: grid.x + grid.width - GUTTER.right, y: grid.y + row }).equals(RGBA.fromHex(palette.plane)), `right gutter ${row}`).toBe(true);
       const corner = (at) => [...find(setup.renderer.root, `square-${at}`).image.raw("rgba8").data.slice(0, 3)];
       expect(corner("a1")).toEqual(token(pair.dark));
       expect(corner("h1")).toEqual(token(pair.light));

@@ -16,7 +16,7 @@ export const manifest = {
     "A board and two seats. The buffer holds the live game — position, moves, clocks, who sits; a seat is a user, the engine, " +
     "or a hallucinator that may see the engine's assessment before it moves. A finished game seals into the corpus as a literal.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED", "HARNESS", "CONVERSATION", "TOOLING"],
+  traits: ["SURFACED", "EXPOSED", "HARNESS", "CONVERSATION", "TOOLING"],
 };
 
 export const buffer = v
@@ -29,7 +29,7 @@ export const buffer = v
       "/match/move plays the caller's move and then lets every non-user seat answer in turn; /match/step lets a bot seat move on its own.",
   );
 
-export const views = [
+export const surfaces = [
   { slug: "play", mount: "buffer/Play.svelte", mime: mime.dom.svelte },
   { slug: "play", mount: "buffer/play.jsx", mime: mime.tty.solid },
 ];

@@ -14,8 +14,8 @@ const { describe, it, expect, beforeAll, afterAll } = specimen;
 describe("practice mode — the assembly", () => {
   it("P-manifest: coach/practice is the full agentic set with a buffer and a view, a harness and four tools", () => {
     expect(practice.manifest.type).toBe("coach");
-    expect([...practice.manifest.traits].sort()).toEqual(["CONVERSATION", "EXPOSED", "HARNESS", "TOOLING", "VIEWABLE"]);
-    expect(practice.views[0].mount).toBe("buffer/Practice.svelte");
+    expect([...practice.manifest.traits].sort()).toEqual(["CONVERSATION", "EXPOSED", "HARNESS", "SURFACED", "TOOLING"]);
+    expect(practice.surfaces[0].mount).toBe("buffer/Practice.svelte");
     const armed = Object.keys(shape.strip(practice.tools).branches.practice.branches).sort();
     expect(armed).toEqual(["assess", "board", "elo", "move", "note"]);
   });

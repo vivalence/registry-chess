@@ -6,7 +6,7 @@
   // the corpus in a list. the buffer carries the rows under a filter; import adds to the corpus
   // and refreshes; opening a game is the study's business — a fresh study buffer on this daemon,
   // loaded with the game.
-  const { terminal, buffer, surface } = $props();
+  const { terminal, buffer, skin } = $props();
   const data = buffer.$data;
 
   const FILTERS = ["all", "1-0", "0-1", "½-½", "analysed", "eco.A", "eco.B", "eco.C", "eco.D", "eco.E"];

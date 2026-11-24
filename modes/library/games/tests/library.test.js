@@ -12,11 +12,11 @@ const FOOLS = '[Event "Test"]\n[White "A"]\n[Black "B"]\n[Result "0-1"]\n\n1. f3
 const SCHOLAR = '[Event "Test"]\n[White "Scholar"]\n[Black "Victim"]\n[Result "1-0"]\n\n1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6 4. Qxf7# 1-0';
 
 describe("library mode — the assembly", () => {
-  it("P-manifest: library/games is VIEWABLE EXPOSED with a buffer and a view and ten filters", () => {
+  it("P-manifest: library/games is SURFACED EXPOSED with a buffer and a view and ten filters", () => {
     expect(library.manifest.type).toBe("library");
     expect(library.manifest.slug).toBe("games");
-    expect([...library.manifest.traits].sort()).toEqual(["EXPOSED", "VIEWABLE"]);
-    expect(library.views[0].mount).toBe("buffer/Library.svelte");
+    expect([...library.manifest.traits].sort()).toEqual(["EXPOSED", "SURFACED"]);
+    expect(library.surfaces[0].mount).toBe("buffer/Library.svelte");
     expect(library.FILTERS.length).toBe(10);
   });
 

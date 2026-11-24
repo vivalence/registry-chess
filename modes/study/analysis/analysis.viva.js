@@ -11,7 +11,7 @@ export const manifest = {
     "The post-mortem. A game — from the corpus or pasted as PGN — on a board you step through; the engine's evaluation at every " +
     "ply, every move judged by win percentage lost, accuracy per side; a hallucinator that explains one move in words from what the engine found.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED", "HARNESS"],
+  traits: ["SURFACED", "EXPOSED", "HARNESS"],
 };
 
 const EXPLAIN = [
@@ -51,6 +51,6 @@ export const buffer = v
     })
     .desc("One game under the lens. Load it, run the engine over every position, step through the judgements, ask why. Example: /analysis/load { pgn: \"1. e4 e5 2. Nf3 *\" }.");
 
-export const views = [
+export const surfaces = [
   { slug: "analysis", mount: "buffer/Analysis.svelte", mime: mime.dom.svelte },
 ];

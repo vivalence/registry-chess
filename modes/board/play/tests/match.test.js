@@ -13,8 +13,8 @@ const ENTRY = new URL("../buffer/Play.svelte", import.meta.url).pathname;
 describe("play mode — the assembly", () => {
   it("P-manifest: board/play is an agentic, conversational game with a buffer and a view, a harness and its own tools", () => {
     expect(play.manifest.type).toBe("board");
-    expect([...play.manifest.traits].sort()).toEqual(["CONVERSATION", "EXPOSED", "HARNESS", "TOOLING", "VIEWABLE"]);
-    expect(play.views[0].mount).toBe("buffer/Play.svelte");
+    expect([...play.manifest.traits].sort()).toEqual(["CONVERSATION", "EXPOSED", "HARNESS", "SURFACED", "TOOLING"]);
+    expect(play.surfaces[0].mount).toBe("buffer/Play.svelte");
     expect(typeof play.harness.use).toBe("function");
   });
 

@@ -7,10 +7,10 @@
 -->
 <style>
 :global(.chess) {
-  --s0: var(--surface);
-  --s1: var(--surface-lift);
-  --s2: var(--surface-sunk);
-  --s3: var(--surface-lift);
+  --s0: var(--plane);
+  --s1: var(--plane-lift);
+  --s2: var(--plane-sunk);
+  --s3: var(--plane-lift);
   --s4: var(--control-contrast-pressed);
   --b0: var(--boundary);
   --b2: var(--boundary-soft);
@@ -26,7 +26,7 @@
   --sq-light: var(--boundary-strong);
   --sq-dark: var(--control-contrast-pressed);
   --pw: var(--text-header);
-  --pb: var(--surface-sunk);
+  --pb: var(--plane-sunk);
   --pw-shadow: var(--shadow);
   --pb-shadow: color-mix(in srgb, var(--text-header) 28%, transparent);
   --hl-last: color-mix(in srgb, var(--warning) 40%, transparent);
@@ -57,21 +57,21 @@
   :global(:root[data-theme="parchment"] .chess),
   :global(:root[data-theme="porcelain"] .chess),
   :global(:root[data-theme="datasette"] .chess) {
-    --pw: var(--surface-lift);
+    --pw: var(--plane-lift);
     --pb: var(--text-header);
     --pw-shadow: color-mix(in srgb, var(--text-header) 70%, transparent);
-    --pb-shadow: color-mix(in srgb, var(--surface-lift) 40%, transparent);
+    --pb-shadow: color-mix(in srgb, var(--plane-lift) 40%, transparent);
   }
   :global(:root[data-theme="parchment"] .chess) {
-    --sq-light: var(--surface);
+    --sq-light: var(--plane);
     --sq-dark: var(--boundary);
   }
   :global(:root[data-theme="porcelain"] .chess) {
-    --sq-light: var(--surface);
+    --sq-light: var(--plane);
     --sq-dark: var(--boundary-strong);
   }
   :global(:root[data-theme="datasette"] .chess) {
-    --sq-light: var(--surface-sunk);
+    --sq-light: var(--plane-sunk);
     --sq-dark: var(--text-light);
   }
 

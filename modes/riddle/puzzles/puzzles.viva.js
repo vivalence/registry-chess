@@ -10,7 +10,7 @@ export const manifest = {
     "Chess riddles in five levels, novice to master. One position, whose move, find the line; the opponent's replies are played " +
     "for you; a nudge names the piece. Every attempt is a trace, so a streak is yours across sessions.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED"],
+  traits: ["SURFACED", "EXPOSED"],
 };
 
 export const LEVELS = ["novice", "apprentice", "club", "expert", "master"];
@@ -78,6 +78,6 @@ export const buffer = v
     })
     .desc("One riddle at a time, a streak across them. /riddle/next serves, /riddle/move checks, /riddle/hint nudges. Example: /riddle/open { level: \"club\" }.");
 
-export const views = [
+export const surfaces = [
   { slug: "puzzles", mount: "buffer/Riddles.svelte", mime: mime.dom.svelte },
 ];

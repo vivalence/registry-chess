@@ -107,12 +107,12 @@ export function Play(props) {
       const under = RGB[square.tone];
       target.fillRect(x, y, columns, rows, under);
       if (glyphs && square.piece !== undefined) stamp(target, x, y, sprite(square.piece.toLowerCase(), columns, rows), RGB[ink[board.sideOf(square.piece)]], under);
-      for (const tick of label(square)) target.setCell(x + tick.x, y + tick.y, tick.char, RGB.textMuted, RGB.surface);
+      for (const tick of label(square)) target.setCell(x + tick.x, y + tick.y, tick.char, RGB.textMuted, RGB.plane);
       if (glyphs && square.mark === "dot" && square.piece === undefined) target.setCell(x + Math.floor(columns / 2), y + Math.floor(rows / 2), "●", RGB.signalPrimary, under);
       if (square.mark === "corners" && glyphs && columns >= 3 && rows >= 2)
         for (const [char, corner] of CORNERS) target.setCell(x + corner({ columns, rows }).x, y + corner({ columns, rows }).y, char, RGB.signalPrimary, under);
     }
-    target.fillRect(grid.x + 8 * columns, grid.y, render.GUTTER.right, 8 * rows, RGB.surface);
+    target.fillRect(grid.x + 8 * columns, grid.y, render.GUTTER.right, 8 * rows, RGB.plane);
     const floating = lifted();
     if (glyphs && floating !== null && floating.piece !== undefined)
       stamp(target, grid.x + floating.column * columns, grid.y + floating.row * rows, sprite(floating.piece.toLowerCase(), columns, rows), RGB[ink[board.sideOf(floating.piece)]], RGB.signalPrimary);
@@ -223,7 +223,7 @@ export function Play(props) {
           <span style={{ fg: palette.textMuted }}>{edge() > 0 ? ` +${edge()}` : ""}</span>
         </text>
         <Show when={data().clock !== undefined}>
-          <text wrapMode="none" selectable={false} fg={active() ? palette.inverseOn : palette.textInk} bg={active() ? palette.signalPrimary : palette.surfaceLift} style={{ flexShrink: 0 }}>
+          <text wrapMode="none" selectable={false} fg={active() ? palette.inverseOn : palette.textInk} bg={active() ? palette.signalPrimary : palette.planeLift} style={{ flexShrink: 0 }}>
             {` ${board.clockText(data().clock, side(), now())} `}
           </text>
         </Show>
@@ -256,7 +256,7 @@ export function Play(props) {
       wrapMode="none"
       selectable={false}
       fg={buttonProps.enabled ? palette.textStrong : palette.textLight}
-      bg={buttonProps.enabled ? palette.surfaceLift : palette.surfaceSunk}
+      bg={buttonProps.enabled ? palette.planeLift : palette.planeSunk}
       style={{ flexShrink: 0, height: 1, marginRight: 1 }}
       onMouseUp={() => (buttonProps.enabled ? buttonProps.run() : undefined)}
     >

@@ -12,7 +12,7 @@ export const manifest = {
     "The game corpus in a list: every sealed and imported game, newest first, filtered by result, opening family or analysis; " +
     "paste a PGN to import; open any game in the study.",
   version: "0.1.0",
-  traits: ["VIEWABLE", "EXPOSED"],
+  traits: ["SURFACED", "EXPOSED"],
 };
 
 export const GAME = v.object({
@@ -42,6 +42,6 @@ export const buffer = v
     })
     .desc("The corpus in a list. /library/list fills it under a filter; /library/import adds games; opening one is the study's business. Example: /library/list { filter: \"1-0\" }.");
 
-export const views = [
+export const surfaces = [
   { slug: "games", mount: "buffer/Library.svelte", mime: mime.dom.svelte },
 ];

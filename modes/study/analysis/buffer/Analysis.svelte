@@ -8,7 +8,7 @@
   // the post-mortem: one game under the lens. the buffer carries the line laid out (fens · sans),
   // the cursor, the report and the ladders; the view steps, runs, asks. the run streams — its
   // progress lives here while it runs and lands on the buffer when it is over.
-  const { terminal, buffer, surface } = $props();
+  const { terminal, buffer, skin } = $props();
   const data = buffer.$data;
 
   const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

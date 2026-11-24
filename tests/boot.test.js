@@ -172,10 +172,10 @@ describe("boot — this package on a ledger of its own: the chess daemon mounts,
     expect(signup.status).toBe("SUCCESS");
     learner = signup.authority.access;
     const [play] = await runtime.call("/daemon/chess/entities/mode/find", { where: { type: "board", slug: "play" } }, learner);
-    expect(play.traits).toContain("VIEWABLE");
+    expect(play.traits).toContain("SURFACED");
     const thread = await runtime.call("/userspace/entities/thread/create", { data: { mode: play.id } }, learner);
     expect(thread.mode.id ?? thread.mode).toBe(play.id);
-    const views = await runtime.call("/userspace/entities/view/find", { where: { mode: play.id } }, learner);
+    const views = await runtime.call("/userspace/entities/surface/find", { where: { mode: play.id } }, learner);
     expect(views.map((view) => view.mime).sort()).toEqual(["application/vnd.viva.dom.svelte+javascript", "application/vnd.viva.tty.solid+javascript"]);
     expect(views.every((view) => view.slug === "play")).toBe(true);
   });

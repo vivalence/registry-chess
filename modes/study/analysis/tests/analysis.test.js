@@ -12,10 +12,10 @@ const ENTRY = new URL("../buffer/Analysis.svelte", import.meta.url).pathname;
 const LADDER = new URL("../buffer/kit/Ladder.svelte", import.meta.url).pathname;
 
 describe("analysis mode — the assembly", () => {
-  it("P-manifest: study/analysis is VIEWABLE EXPOSED HARNESS with a buffer and a view", () => {
+  it("P-manifest: study/analysis is SURFACED EXPOSED HARNESS with a buffer and a view", () => {
     expect(analysis.manifest.type).toBe("study");
-    expect([...analysis.manifest.traits].sort()).toEqual(["EXPOSED", "HARNESS", "VIEWABLE"]);
-    expect(analysis.views[0].mount).toBe("buffer/Analysis.svelte");
+    expect([...analysis.manifest.traits].sort()).toEqual(["EXPOSED", "HARNESS", "SURFACED"]);
+    expect(analysis.surfaces[0].mount).toBe("buffer/Analysis.svelte");
   });
 
   it("P-bundle: Analysis.svelte bundles with its kit, no chessground", { sanitizeResources: false, sanitizeOps: false }, async () => {

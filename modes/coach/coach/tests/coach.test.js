@@ -12,7 +12,7 @@ describe("coach — headless, offering skills", () => {
   it("P-manifest: coach/coach has a harness and offers skills, and no view, no doors", () => {
     expect(coach.manifest.type).toBe("coach");
     expect([...coach.manifest.traits].sort()).toEqual(["HARNESS", "TOOLING"]);
-    expect(coach.views).toBeUndefined();
+    expect(coach.surfaces).toBeUndefined();
     expect(coach.aperture).toBeUndefined();
     expect(coach.tools.patterns.map((pattern) => pattern.nature).sort()).toEqual(["ask", "explain", "review", "suggest", "teach"]);
   });
